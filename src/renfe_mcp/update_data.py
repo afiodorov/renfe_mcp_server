@@ -137,7 +137,7 @@ def safe_extract_zip(zip_path: str, extract_to: str) -> list[str]:
 def get_server_last_modified():
     """Get the last modified date from Renfe API."""
     try:
-        response = requests.get(RENFE_API_URL, params={"id": RESOURCE_ID})
+        response = requests.get(RENFE_API_URL, params={"id": RESOURCE_ID}, timeout=10)
         response.raise_for_status()
         data = response.json()
 
