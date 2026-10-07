@@ -137,10 +137,11 @@ class StationService:
         if self.gtfs_stops_df is None:
             return []
 
-        city_name_lower = city_name.lower()
-        matching_stops = self.gtfs_stops_df[
-            self.gtfs_stops_df["stop_name"].str.lower().str.contains(city_name_lower, na=False)
-        ]
+        # Accent-insensitive: GTFS spells e.g. "València-Joaquín Sorolla", which
+        # a plain lowercase match for "valencia" would miss.
+        query = self._normalize_name(city_name)
+        names = self.gtfs_stops_df["stop_name"].fillna("").map(self._normalize_name)
+        matching_stops = self.gtfs_stops_df[names.str.contains(query, regex=False)]
 
         stations = []
         for _, stop in matching_stops.iterrows():
